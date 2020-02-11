@@ -1,0 +1,29 @@
+#!/bin/sh
+# The name of a gpg Qube
+VM="vault"
+# Timeout (ms) for notifications
+NOTIFY_TIMEOUT=2000
+
+# Get the YubiKey device id
+USB_DEVICE=`qvm-usb |grep YubiKey |awk '{ print $1 }'`
+
+# Start the gpg Qube if it is halted
+VM_STATUS=`qvm-ls $VM |grep $VM |awk '{ print $2 }'`
+if [ "$VM_STATUS" = "Halted" ]; then
+	qvm-start $VM
+fi
+
+if [ -z "$USB_DEVICE" ]; then
+	notify-send "YubiKey not foud"
+else
+	# Detach if the Yubikey is already attached
+	ATTACHED=`qvm-usb |grep YubiKey |awk '{ print $3 }'`
+	if [ "$ATTACHED" -a -z "$1" ]; then
+		notify-send -t $NOTIFY_TIMEOUT "Detaching Yubikey"
+		qvm-usb detach $VM $USB_DEVICE
+		sleep 1
+	fi
+	qvm-usb attach $VM $USB_DEVICE && \
+		notify-send -t $NOTIFY_TIMEOUT "YubiKey attached"
+fi
+

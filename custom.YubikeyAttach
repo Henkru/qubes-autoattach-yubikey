@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# The yubi has to be run in the current user context to
+# get notifications to the correct desktop
+USER=`getent passwd 1000 |cut -d: -f1`
+DISPLAY=:0 sudo -u $USER /usr/local/bin/yubi 0

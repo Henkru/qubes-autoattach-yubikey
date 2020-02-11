@@ -1,0 +1,1 @@
+ACTION=="add", ENV{ID_VENDOR_ID}=="1050", SUBSYSTEM=="input", ENV{ID_SECURITY_TOKEN}=="1", RUN+="/usr/bin/qrexec-client-vm dom0 custom.YubikeyAttach"
